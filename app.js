@@ -11,15 +11,88 @@ const app = express();
 const port = process.env.port || 3000;
 
 
+// const pool = new Pool({
+//     user: 'postgres',
+//     host: 'localhost',
+//     database: 'food-tracker ',
+//     password: process.env.PG_PASSWORD,
+//     port: 5432,
+// });
+
+
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'food-tracker ',
-    password: process.env.PG_PASSWORD,
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-// Middleware
+
+(async () => {
+    try {
+        const client = await pool.connect();
+        console.log("Connected to the database successfully!");
+        try {
+            const createUsersTableQuery = `
+              CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                firstName VARCHAR(50),
+                lastName VARCHAR(50)
+              );
+            `;
+        
+            const createNotesTableQuery = `
+              CREATE TABLE IF NOT EXISTS notes (
+                id SERIAL PRIMARY KEY,
+                user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                title VARCHAR(255) NOT NULL,
+                note TEXT NOT NULL,
+                created_at DATE DEFAULT CURRENT_DATE
+              );
+            `;
+        
+            const alterNotesTableQuery = `
+              ALTER TABLE notes ADD COLUMN IF NOT EXISTS day_diff_from_epoch INT;
+            `;
+        
+            const updateNotesTableQuery = `
+              UPDATE notes
+              SET day_diff_from_epoch = EXTRACT(EPOCH FROM created_at) / 86400;
+            `;
+        
+            await client.query('BEGIN');
+            await client.query(createUsersTableQuery);
+            await client.query(createNotesTableQuery);
+            await client.query(alterNotesTableQuery);
+            await client.query(updateNotesTableQuery);
+            await client.query('COMMIT');
+        
+            console.log('Tables created and columns updated successfully.');
+          } catch (err) {
+            await client.query('ROLLBACK');
+            console.error('Error executing queries:', err);
+          } finally {
+            client.release();
+          }
+    } catch (error) {
+        console.error("Error connecting to the database:", error);
+    }
+})();
+
+
+
+// async function createTables() {
+//   const client = await pool.connect();
+
+
+// }
+
+// createTables();
+
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('views'));
 app.use(express.static("public"));
@@ -211,14 +284,14 @@ app.post('/login', async (req, res) => {
         const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 
         if (result.rows.length === 0) {
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).send('username not found! <a href="/login">Retry</a>.');
         }
 
         const user = result.rows[0];
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).send('Invalid username or password! <a href="/login">Retry</a>.');
         }
 
       
