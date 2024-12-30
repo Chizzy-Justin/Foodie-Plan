@@ -124,9 +124,11 @@
     function showModal(title, note) {
         const modalTitle = document.getElementById('noteModalLabel');
         const modalBody = document.getElementById('noteModalBody');
+        console.log('moal not aktiv');
         
         modalTitle.textContent = title;
         modalBody.innerHTML = note;
+console.log('moal aktiv');
 
         const modal = new bootstrap.Modal(document.getElementById('noteModal'));
         modal.show();
