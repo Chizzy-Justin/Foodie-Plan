@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #F3F3F3;
+      color: #161616;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .otp-container {
+      text-align: center;
+    }
+
+    .otp-input {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      text-align: center;
+      margin: 0 5px;
+      border: 2px solid #161616;
+      border-radius: 5px;
+      background-color: transparent;
+      color: #161616;
+    }
+
+    .otp-input:focus {
+      outline: none;
+      border-color: #FFD700; /* Yellow */
+    }
+
+    .otp-instructions {
+      margin-top: 20px;
+    }
+
+    .btn {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-container">
+    <h2>Enter OTP</h2>
+    <p class="otp-instructions">Please enter the 6-digit code sent to your email.</p>
+    <form action="/verify-otp" method="post">
+    <div>
+      <input type="text" class="otp-input" name="otp1" maxlength="1" autofocus>
+      <input type="text" class="otp-input" name="otp2" maxlength="1">
+      <input type="text" class="otp-input" name="otp3" maxlength="1">
+      <input type="text" class="otp-input" name="otp4" maxlength="1">
+      <input type="text" class="otp-input" name="otp5" maxlength="1">
+      <input type="text" class="otp-input" name="otp6" maxlength="1">
+    </div>
+    <input type="hidden" name="email" value="<%= email %>">
+    <input type="hidden" name="password" value="<%= password %>">
+    <input type="hidden" name="address" value="<%= address %>">
+    <input type="hidden" name="zipCode" value="<%= zipCode %>">
+    <input type="hidden" name="state" value="<%= state %>">
+    <input type="hidden" name="country" value="<%= country %>">
+    <input type="hidden" name="phoneNumber" value="<%= phoneNumber %>">
+    <input type="hidden" name="isLoggedIn" value="<%= isLoggedIn %>">
+    <input type="hidden" name="firstName" value="<%= firstName %>">
+    <input type="hidden" name="lastName" value="<%= lastName %>">
+    <input type="hidden" name="cartList" value="<%= JSON.stringify(cartList) %>">
+    <input type="hidden" name="cartListBtnIdList" value="<%= JSON.stringify(cartListBtnIdList) %>">
+    <input type="hidden" name="itemQty" value="<%= JSON.stringify(itemQty) %>">
+    <input type="hidden" name="hashedOtp" value="<%= hashedOtp %>">
+
+    
+   <button id="verify-otp" class="btn btn-success">Verify OTP</button>
+   <p class="text-muted text-center">Didn't receive the code? You can request a new one in <span id="resend-timer">60</span> seconds.</p>
+</form>
+<form action="/resend-otp" method="post">
+  <input type="hidden" id="re-receivers-email" name="email" value="<%= email %>">
+
+    <input type="hidden" id="password" name="password" value="<%= password %>">
+    <input type="hidden" id="address" name="address" value="<%= address %>">
+    <input type="hidden" id="zipCode" name="zipCode" value="<%= zipCode %>">
+    <input type="hidden" id="state" name="state" value="<%= state %>">
+    <input type="hidden" id="country" name="country" value="<%= country %>">
+    <input type="hidden" id="phoneNumber" name="phoneNumber" value="<%= phoneNumber %>">
+    <input type="hidden" id="isLoggedIn" name="isLoggedIn" value="<%= isLoggedIn %>">
+    <input type="hidden" id="firstName" name="firstName" value="<%= firstName %>">
+    <input type="hidden" id="lastName" name="lastName" value="<%= lastName %>">
+    <input type="hidden" id="cartList" name="cartList" value="<%= JSON.stringify(cartList) %>">
+    <input type="hidden" id="cartListBtnIdList" name="cartListBtnIdList" value="<%= JSON.stringify(cartListBtnIdList) %>">
+    <input type="hidden" id="itemQty" name="itemQty" value="<%= JSON.stringify(itemQty) %>">
+    <input type="hidden" id="hashedOtp" name="hashedOtp" value="<%= hashedOtp %>">
+  <button id="resend-otp" class="btn btn-primary disabled" disabled>Resend OTP</button>
+</form>
+  </div>
+   
+  <script>
+    // JavaScript code goes here
+  </script>
+  <script src="otp.js"></script>
+</body>
+</html>
