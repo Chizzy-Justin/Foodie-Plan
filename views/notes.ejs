@@ -20,7 +20,7 @@
                                 <p class="card-text">
                                     <% if (note.note.length > 100) { %>
                                         <%= note.note.substring(0, 100) %>... 
-                                        <a href="javascript:void(0)" class="fw-bold text-primary text-decoration-none" onclick="showModal('<%- note.title %>', '<%- note.note %>')">
+                                        <a href="javascript:void(0)" class="fw-bold text-primary text-decoration-none" onclick="showModal('<%- escape(note.title) %>', '<%- escape(note.note) %>')">
                                           Read More
                                       </a>
                                       
